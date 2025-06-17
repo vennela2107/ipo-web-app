@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>IPO List</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+  <h2 class="mb-4 text-center">IPO Listings</h2>
+  <table class="table table-bordered table-striped">
+    <thead class="table-dark">
+      <tr>
+        <th>Company</th>
+        <th>Price Band</th>
+        <th>Status</th>
+        <th>Open Date</th>
+        <th>Close Date</th>
+      </tr>
+    </thead>
+    <tbody id="ipo-table-body">
+    </tbody>
+  </table>
+</div>
+
+<script>
+  fetch('/api/ipo/')
+    .then(response => response.json())
+    .then(data => {
+      const tbody = document.getElementById('ipo-table-body');
+      data.forEach(ipo => {
+        const row = `
+          <tr>
+            <td><a href="/ipo/${ipo.id}/">${ipo.company_name}</a></td>
+            <td>${ipo.price_band}</td>
+            <td>${ipo.status}</td>
+            <td>${ipo.open_date}</td>
+            <td>${ipo.close_date}</td>
+          </tr>
+        `;
+        tbody.innerHTML += row;
+      });
+    });
+</script>
+</body>
+</html>

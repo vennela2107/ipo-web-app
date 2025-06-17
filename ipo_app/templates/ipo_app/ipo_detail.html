@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>IPO Details</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+  <div class="card shadow p-4">
+    <h2 class="card-title text-center mb-3" id="company-name">Loading...</h2>
+    <p><strong>Status:</strong> <span id="status"></span></p>
+    <p><strong>Price Band:</strong> ₹<span id="price-band"></span></p>
+    <p><strong>Open Date:</strong> <span id="open-date"></span></p>
+    <p><strong>Close Date:</strong> <span id="close-date"></span></p>
+
+    <canvas id="priceChart" width="400" height="200" class="my-4"></canvas>
+
+    <p><strong>IPO Price:</strong> ₹<span id="ipo-price"></span></p>
+    <p><strong>Listing Price:</strong> ₹<span id="listing-price"></span></p>
+    <p><strong>Market Price:</strong> ₹<span id="market-price"></span></p>
+
+    <a href="/" class="btn btn-secondary mt-3">← Back to List</a>
+  </div>
+</div>
+
+<script>
+  const path = window.location.pathname;
+  const id = path.split('/').filter(Boolean).pop();
+
+  fetch(`/api/ipo/${id}/`)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('company-name').innerText = data.company_name;
+      document.getElementById('status').innerText = data.status;
+      document.getElementById('price-band').innerText = data.price_band;
+      document.getElementById('open-date').innerText = data.open_date;
+      document.getElementById('close-date').innerText = data.close_date;
+      document.getElementById('ipo-price').innerText = data.ipo_price;
+      document.getElementById('listing-price').innerText = data.listing_price;
+      document.getElementById('market-price').innerText = data.current_market_price;
+
+      // Draw Chart
+      const ctx = document.getElementById('priceChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['IPO Price', 'Listing Price', 'Market Price'],
+          datasets: [{
+            label: 'Price Comparison',
+            data: [data.ipo_price, data.listing_price, data.current_market_price],
+            backgroundColor: ['#007bff', '#ffc107', '#28a745']
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    });
+</script>
+</body>
+</html>
